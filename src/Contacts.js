@@ -166,50 +166,65 @@ function Contacts () {
     };
 
     return (
-        <div id="Contacts">
+        <div id="Contacts" className="bg-primary text-text-primary py-4 px-6">
             {!authenticated &&
-            <h2>Please log in to see data</h2>
+            <h2 className="text-2xl font-bold">Please log in to see data</h2>
             }
             {authenticated &&
-            <section id="contactsTable">
-                <h2>Contacts</h2>
+            <section id="contactsTable" className="container mx-auto flex justify-between items-center">
+                <h2 className="text-3xl font-bold">Contacts</h2>
                 {alert &&  <div 
-                            className="fixed top-5 left-1/2 transform -translate-x-1/2 text-green-600 px-4 py-2 rounded-lg shadow-md opacity-100 transition-opacity duration-1000 ease-out"
+                            className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-white text-green-600 px-4 py-2 rounded-lg shadow-md opacity-100 transition-opacity duration-1000 ease-out"
                             style={{ transition: "opacity 1s ease-out" }}
                         >
                             {success}
                         </div>}
-                {error && <p className="text-red-600">Opla! {error}</p>}
-                <div id="searchBar">
+                {error && <p className="bg-white text-red-600 rounded-lg shadow-md opacity-100">Opla! {error}</p>}
+                <div id="searchBar" className="bg-white text-text-secondary rounded-xl shadow-lg p-6">
                     <input type="text" placeholder="Search..." className="border p-2 rounded w-full"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)} />
                 </div>
                 <form>
                 {filteredContacts.map((c, ix) => (
-                    <div key={c.contactId}>
-                        <input type="text" name="company" value={c.company} onChange={(e) => handleEdit(e, ix)}/>
-                        <input type="text" name="contactname" value={c.contactname} onChange={(e) => handleEdit(e, ix)}/>
-                        <input type="text" name="phoneno" value={c.phoneno} onChange={(e) => handleEdit(e, ix)}/>
-                        <input type="email" name="email" value={c.email} onChange={(e) => handleEdit(e, ix)}/>
-                        <input type="text" name="note" value={c.note} onChange={(e) => handleEdit(e, ix)}/>
+                    <div className="bg-white text-text-secondary rounded-xl shadow-lg p-6 mb-6" key={c.contactId}>
+                        <input type="text" name="company" value={c.company} onChange={(e) => handleEdit(e, ix)}
+                            className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                        <input type="text" name="contactname" value={c.contactname} onChange={(e) => handleEdit(e, ix)}
+                            className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        <input type="text" name="phoneno" value={c.phoneno} onChange={(e) => handleEdit(e, ix)}
+                            className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        <input type="email" name="email" value={c.email} onChange={(e) => handleEdit(e, ix)}
+                            className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        <textarea type="text" name="note" value={c.note} onChange={(e) => handleEdit(e, ix)}
+                            className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
                         {editedIndices.has(ix) && !loading && ( 
                         <div id="saveDiscard">
-                            <button type="button" disabled={loading} onClick={() => handleSave(ix)}>Save</button>
-                            <button type="button" disabled={loading} onClick={() => handleDiscard(ix)}>Discard</button>
+                            <button className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent" 
+                            type="button" disabled={loading} onClick={() => handleSave(ix)}>Save</button>
+                            <button className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent"
+                            type="button" disabled={loading} onClick={() => handleDiscard(ix)}>Discard</button>
                         </div>
                         )}
-                        <button type="button" disabled={loading} onClick={() => handleDelete(ix)}>Delete</button>
+                        <button className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent"
+                        type="button" disabled={loading} onClick={() => handleDelete(ix)}>Delete</button>
                     </div>
                 ))}
                 </form>
-                <form onSubmit={addContacts}>
-                    <input type="text" name="company" value={newContact.company} onChange={handleChange}/>
-                    <input type="text" name="contactname" value={newContact.contactname} onChange={handleChange}/>
-                    <input type="text" name="phoneno" value={newContact.phoneno} onChange={handleChange}/>
-                    <input type="email" name="email" value={newContact.email} onChange={handleChange}/>
-                    <input type="text" name="note" value={newContact.note} onChange={handleChange}/>
-                    <button type="submit" disabled={loading}>
+                <form onSubmit={addContacts} className="bg-white text-text-secondary rounded-xl shadow-lg p-6 mb-6">
+                    <input type="text" name="company" value={newContact.company} onChange={handleChange} placeholder='Company name'
+                        className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    <input type="text" name="contactname" value={newContact.contactname} onChange={handleChange} placeholder='Person name'
+                        className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    <input type="text" name="phoneno" value={newContact.phoneno} onChange={handleChange} placeholder='Phone no.'
+                        className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    <input type="email" name="email" value={newContact.email} onChange={handleChange} placeholder='E-Mail'
+                        className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    <textarea type="text" name="note" value={newContact.note} onChange={handleChange} placeholder='Add your notes here...'
+                        className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    <button type="submit" disabled={loading} 
+                        className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent">
                         {loading ? 'Monkeys dispatched..' : 'Save'}
                     </button>
                 </form>

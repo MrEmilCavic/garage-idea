@@ -113,46 +113,51 @@ function User () {
     };
 
     return (
-        <div id="User">
-            {alert &&  <div className="fixed top-5 left-1/2 transform -translate-x-1/2 text-green-600 px-4 py-2 rounded-lg shadow-md opacity-100 transition-opacity duration-1000 ease-out"
+        <div id="User" className="bg-primary text-text-primary py-4 px-6">
+            {alert &&  <div className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-white text-green-600 px-4 py-2 rounded-lg shadow-md opacity-100 transition-opacity duration-1000 ease-out"
                             style={{ transition: "opacity 1s ease-out" }}>
                             {success}
                         </div>
             }
             {!authenticated &&
-            <section id="signUp">
-            <h2 className="cursor-pointer" onClick={(e) => handleToggle(setShowSignUp)}>Is it your first time? We are happy to welcome you!</h2>
+            <section id="signUp" className="container mx-auto flex justify-between items-center">
+            <h2 className="text-2xl font-bold cursor-pointer hover:text-accent" onClick={(e) => handleToggle(setShowSignUp)}>Is it your first time? We are happy to welcome you!</h2>
             {showSignUp &&
                 <div id="signUpForm">
-                    <h4>Let's get you started:</h4>
+                    <h4 className="text-2xl font-bold">Let's get you started:</h4>
                     {error && <p className="text-red-600">Error: {error}</p>}
                     <form onSubmit={handleSignUp}>
-                        <div>
-                            <label htmlFor="email"> e-mail: </label>
+                        <div className="bg-white text-text-secondary rounded-xl shadow-lg p-6 mb-6">
+                            <label htmlFor="email" className="block text-text-primary font-medium mb-2"> e-mail: </label>
                             <input type="text" name="credentials" value={signUpData.credentials} onChange={(e) => handleChange(e, setSignUpData)} />
-                            <label htmlFor="password"> Password: </label>
+                            <label htmlFor="password" className="block text-text-primary font-medium mb-2"> Password: </label>
                             <input type="password" name="secret" value={signUpData.secret} onChange={(e) => handleChange(e, setSignUpData)} />
-                            <label htmlFor="confirmPassword"> Confirm Password: </label>
+                            <label htmlFor="confirmPassword" className="block text-text-primary font-medium mb-2"> Confirm Password: </label>
                             <input type="password" name="confirmPassword" value={signUpData.confirmPassword} onChange={(e) => handleChange(e, setSignUpData)} />
                         </div>
-                        <button type="submit" disabled={loading}>Sign me up!</button>
+                        <button type="submit" disabled={loading} 
+                            className="mt-4 px-6 py-2 bg-secondary text-white rounded-lg hover:bg-accent">
+                            Sign me up!
+                        </button>
                     </form>
                 </div>
             }
             </section>
             }
             {!authenticated && !showSignUp &&
-                <section id="signIn">
-                <h2>Sign in:</h2>
-                {error && <p className="text-red-600">Error: {error}</p>}
+                <section id="signIn" className="container mx-auto flex justify-between items-center">
+                <h2 className="text-2xl font-bold">Sign in:</h2>
+                {error && <p className="text-red-600 bg-white">Error: {error}</p>}
                 <form onSubmit={handleSignIn}>
-                    <div>
-                        <label htmlFor="email"> e-mail: </label>
+                    <div className="bg-white text-text-secondary rounded-xl shadow-lg p-6 mb-6">
+                        <label htmlFor="email"> className="block text-text-primary font-medium mb-2" e-mail: </label>
                         <input type="text" name="credentials" value={signInData.credentials} onChange={(e) => handleChange(e, setSignInData)} />
-                        <label htmlFor="password"> Password: </label>
+                        <label htmlFor="password" className="block text-text-primary font-medium mb-2"> Password: </label>
                         <input type="password" name="secret" value={signInData.secret} onChange={(e) => handleChange(e, setSignInData)} />
                     </div>
-                    <button type="submit" disabled={loading}>Sign me in!</button>
+                    <button type="submit" disabled={loading} className="mt-4 px-6 py-2 bg-secondary text-white rounded-lg hover:bg-accent">
+                        Sign me in!
+                        </button>
                 </form>
             </section>
             }
@@ -162,7 +167,7 @@ function User () {
                         {userProfile.email}
                         <img src={userProfile.avatar}  className="w-20 h-auto rounded-full ml-4"  alt="your avatar" />
                     </p>
-                    <span onClick={logout} className="flex text-center cursor-pointer px-2">logout</span>
+                    <span onClick={logout} className="flex text-center cursor-pointer px-2 mt-4 px-6 py-2 bg-secondary text-white rounded-lg hover:bg-accent">logout</span>
                 </section>
             }
         </div>

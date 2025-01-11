@@ -16,6 +16,8 @@ function User () {
 
     const { login, logout, authenticated, userProfile } = useAuth();
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [alert, setAlert] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showSignUp, setShowSignUp] = useState(false);
 
@@ -57,7 +59,9 @@ function User () {
         try {
             const response = await axios.post('https://garagebackend20250107115750-garagebackend.azurewebsites.net/api/SignUp/register', signUpData);
             if (response.status === 200) {
-                alert('Sign-up successful, welcome to the community!');
+                setSuccess('Sign-up successful, welcome to the community!');
+                setAlert(true);
+                setTimeout(() => setAlert(false), 2000);
                 setLoading(false);
                 setError('');
                 setSignUpData({
@@ -92,7 +96,9 @@ function User () {
                     credentials: '',
                     secret: ''
                 });
-                alert('Sign-in successful, welcome back!');
+                setSuccess('Sign-in successful, welcome back!');
+                setAlert(true);
+                setTimeout(() => setAlert(false), 2000);
                 setError('');
                 } else {
                     setError('Sign in unsuccesful, try using your correct email and password (:');
@@ -108,6 +114,11 @@ function User () {
 
     return (
         <div id="User">
+            {alert &&  <div className="fixed top-5 left-1/2 transform -translate-x-1/2 text-green-600 px-4 py-2 rounded-lg shadow-md opacity-100 transition-opacity duration-1000 ease-out"
+                            style={{ transition: "opacity 1s ease-out" }}>
+                            {success}
+                        </div>
+            }
             {!authenticated &&
             <section id="signUp">
             <h2 className="cursor-pointer" onClick={(e) => handleToggle(setShowSignUp)}>Is it your first time? We are happy to welcome you!</h2>

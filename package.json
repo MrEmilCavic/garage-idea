@@ -1,7 +1,7 @@
 {
   "name": "garage-idea",
   "version": "1.0.130125",
-  "homepage": "https://mremilcavic.github.io/garage-idea"
+  "homepage": "https://mremilcavic.github.io/garage-idea",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",

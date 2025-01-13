@@ -12,7 +12,7 @@ module.exports = {
         'accent': '#4B5563', 
         'background': '#0F172A', 
         'text-primary': '#F3F4F6', 
-        'text-secondary': '#E5E7EB', 
+        'text-secondary': '#E5E7EB',
       },
       fontFamily: {
         'sans': ['Roboto', 'Arial', 'sans-serif'],

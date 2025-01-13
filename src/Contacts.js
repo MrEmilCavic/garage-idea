@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
 
 function Contacts () {
     const  { authenticated, userProfile } = useAuth();
@@ -19,7 +18,8 @@ function Contacts () {
     useEffect(() => {
         const fetchContacts = async () => {
                 try  {
-                    const response = await axios.get('https://garagebackend20250107115750-garagebackend.azurewebsites.net/api/Contacts');
+                    const apiUrl = process.env.REACT_APP_API_URL;
+                    const response = await axios.get(`${apiUrl}/api/Contacts`);
                     if (response.status === 200) {
                         const data = response.data;
                         console.log('contacts data is ', data);
@@ -59,7 +59,8 @@ function Contacts () {
         const updatedContact = editedContacts[index];
         const contactId = updatedContact.contactID;
         try {
-            const response = await axios.put(`https://garagebackend20250107115750-garagebackend.azurewebsites.net/api/Contacts/${contactId}`, updatedContact);
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await axios.put(`${apiUrl}/api/Contacts/${contactId}`, updatedContact);
             if (response.status === 204) {
                 setContacts((prevContacts) => {
                     const updatedContacts = [...prevContacts];
@@ -102,7 +103,8 @@ function Contacts () {
         const contactId = deletedContact.contactID;
         setEditedContacts((prevContacts) => prevContacts.filter((_, i) => i !== index));
         try {
-            const response = await axios.delete(`https://garagebackend20250107115750-garagebackend.azurewebsites.net/api/Contacts/${contactId}`, deletedContact);
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await axios.delete(`${apiUrl}/api/Contacts/${contactId}`, deletedContact);
             console.log('response status is', response.status);
             if (response.status === 204) {
                 setSuccess('Entry deleted successfully!');
@@ -140,7 +142,8 @@ function Contacts () {
             createdAt: createdAt,
         };
         try {
-            const response = await axios.post('https://garagebackend20250107115750-garagebackend.azurewebsites.net/api/Contacts', newContactData);
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await axios.post(`${apiUrl}/api/Contacts`, newContactData);
             if (response.status === 201) {
                 setContacts((prevContacts) => [...prevContacts, response.data]);
                 setNewContact({
@@ -166,13 +169,13 @@ function Contacts () {
     };
 
     return (
-        <div id="Contacts" className="bg-primary text-text-primary py-4 px-6">
+        <div id="Contacts" className="bg-primary h-full text-text-primary py-4 px-6">
             {!authenticated &&
-            <h2 className="text-2xl font-bold">Please log in to see data</h2>
+            <h2 className="text-3xl font-bold text-center mb-128">Please log in to see data</h2>
             }
             {authenticated &&
-            <section id="contactsTable" className="container mx-auto flex justify-between items-center">
-                <h2 className="text-3xl font-bold">Contacts</h2>
+            <section id="contactsTable" className="container mx-auto flex flex-col justify-between items-center mb-6">
+                <h2 className="text-3xl font-bold mb-6">Contacts</h2>
                 {alert &&  <div 
                             className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-white text-green-600 px-4 py-2 rounded-lg shadow-md opacity-100 transition-opacity duration-1000 ease-out"
                             style={{ transition: "opacity 1s ease-out" }}
@@ -180,54 +183,64 @@ function Contacts () {
                             {success}
                         </div>}
                 {error && <p className="bg-white text-red-600 rounded-lg shadow-md opacity-100">Opla! {error}</p>}
-                <div id="searchBar" className="bg-white text-text-secondary rounded-xl shadow-lg p-6">
-                    <input type="text" placeholder="Search..." className="border p-2 rounded w-full"
+                <div id="searchBar" className="w-full lg:w-1/2 bg-white text-secondary rounded-xl shadow-lg p-6 mb-6">
+                    <input type="text" placeholder="Search..." className="border p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary w-full"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)} />
                 </div>
-                <form>
-                {filteredContacts.map((c, ix) => (
-                    <div className="bg-white text-text-secondary rounded-xl shadow-lg p-6 mb-6" key={c.contactId}>
-                        <input type="text" name="company" value={c.company} onChange={(e) => handleEdit(e, ix)}
-                            className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                        <input type="text" name="contactname" value={c.contactname} onChange={(e) => handleEdit(e, ix)}
-                            className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
-                        <input type="text" name="phoneno" value={c.phoneno} onChange={(e) => handleEdit(e, ix)}
-                            className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
-                        <input type="email" name="email" value={c.email} onChange={(e) => handleEdit(e, ix)}
-                            className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
-                        <textarea type="text" name="note" value={c.note} onChange={(e) => handleEdit(e, ix)}
-                            className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
-                        {editedIndices.has(ix) && !loading && ( 
-                        <div id="saveDiscard">
-                            <button className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent" 
-                            type="button" disabled={loading} onClick={() => handleSave(ix)}>Save</button>
+                <form className='w-full'>
+                    <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+                    {filteredContacts.map((c, ix) => (
+                        <div className="bg-white text-secondary rounded-xl shadow-lg p-6 mb-6" key={c.contactId}>
+                            <label htmlFor="company" className="block font-medium mt-2"> Company: </label>
+                            <input type="text" name="company" value={c.company} onChange={(e) => handleEdit(e, ix)}
+                                className="w-full p-3 border border-accent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
+                            <label htmlFor="contactname" className="block font-medium mt-2"> Name: </label>
+                            <input type="text" name="contactname" value={c.contactname} onChange={(e) => handleEdit(e, ix)}
+                                className="w-full p-3 border border-accent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"/>
+                            <label htmlFor="phoneno" className="block font-medium mt-2"> Phone no.: </label>
+                            <input type="text" name="phoneno" value={c.phoneno} onChange={(e) => handleEdit(e, ix)}
+                                className="w-full p-3 border border-accent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"/>
+                           <label htmlFor="e-mail:" className="block font-medium mt-2"> e-mail: </label>
+                           <input type="email" name="email" value={c.email} onChange={(e) => handleEdit(e, ix)}
+                                className="w-full p-3 border border-accent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"/>
+                            <label htmlFor="notes" className="block font-medium mt-2"> Notes: </label>
+                            <textarea type="text" name="note" value={c.note} onChange={(e) => handleEdit(e, ix)}
+                                className="w-full p-3 border border-accent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"/>
+                            {editedIndices.has(ix) && !loading && ( 
+                            <div id="saveDiscard">
+                                <button className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent" 
+                                type="button" disabled={loading} onClick={() => handleSave(ix)}>Save</button>
+                                <button className="mt-4 mx-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent"
+                                type="button" disabled={loading} onClick={() => handleDiscard(ix)}>Discard</button>
+                            </div>
+                            )}
                             <button className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent"
-                            type="button" disabled={loading} onClick={() => handleDiscard(ix)}>Discard</button>
+                            type="button" disabled={loading} onClick={() => handleDelete(ix)}>Delete</button>
                         </div>
-                        )}
-                        <button className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent"
-                        type="button" disabled={loading} onClick={() => handleDelete(ix)}>Delete</button>
+                    ))}
                     </div>
-                ))}
-                </form>
-                <form onSubmit={addContacts} className="bg-white text-text-secondary rounded-xl shadow-lg p-6 mb-6">
-                    <input type="text" name="company" value={newContact.company} onChange={handleChange} placeholder='Company name'
-                        className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
-                    <input type="text" name="contactname" value={newContact.contactname} onChange={handleChange} placeholder='Person name'
-                        className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
-                    <input type="text" name="phoneno" value={newContact.phoneno} onChange={handleChange} placeholder='Phone no.'
-                        className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
-                    <input type="email" name="email" value={newContact.email} onChange={handleChange} placeholder='E-Mail'
-                        className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
-                    <textarea type="text" name="note" value={newContact.note} onChange={handleChange} placeholder='Add your notes here...'
-                        className="w-full p-3 border border-accent rounded-xl bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"/>
-                    <button type="submit" disabled={loading} 
-                        className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent">
-                        {loading ? 'Monkeys dispatched..' : 'Save'}
-                    </button>
-                </form>
+                </form >
+                <div className="flex justify-start flex-col">
+                    <form onSubmit={addContacts} className="lg:w-1/3 bg-white text-secondary rounded-xl shadow-lg p-6 mb-6">
+                    <h2 className="text-xl font-bold mb-6">New Entry:</h2>
+                        <input type="text" name="company" value={newContact.company} onChange={handleChange} placeholder='Company name'
+                            className="w-full p-3 border border-accent rounded-xl mb-2 focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        <input type="text" name="contactname" value={newContact.contactname} onChange={handleChange} placeholder='Person name'
+                            className="w-full p-3 mb-2 border border-accent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        <input type="text" name="phoneno" value={newContact.phoneno} onChange={handleChange} placeholder='Phone no.'
+                            className="w-full p-3 mb-2 border border-accent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        <input type="email" name="email" value={newContact.email} onChange={handleChange} placeholder='E-Mail'
+                            className="w-full mb-2 p-3 border border-accent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        <textarea type="text" name="note" value={newContact.note} onChange={handleChange} placeholder='Add your notes here...'
+                            className="w-full p-3 border border-accent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"/>
+                        <button type="submit" disabled={loading} 
+                            className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent">
+                            {loading ? 'Monkeys dispatched..' : 'Save'}
+                        </button>
+                    </form>
+                </div>
             </section>
             }
         </div>

@@ -3,6 +3,7 @@ import { useAuth } from './AuthContext';
 import axios from 'axios';
 
 
+
 function User () {
     const [signUpData, setSignUpData] = useState({
         credentials:'',
@@ -57,7 +58,8 @@ function User () {
 
         setLoading(true);
         try {
-            const response = await axios.post('https://garagebackend20250107115750-garagebackend.azurewebsites.net/api/SignUp/register', signUpData);
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await axios.post(`${apiUrl}/api/SignUp/register`, signUpData);
             if (response.status === 200) {
                 setSuccess('Sign-up successful, welcome to the community!');
                 setAlert(true);
@@ -88,7 +90,8 @@ function User () {
         emailCheck(credentials);
         setLoading(true);
         try {
-            const response = await axios.post('https://garagebackend20250107115750-garagebackend.azurewebsites.net/signin', signInData);
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await axios.post(`${apiUrl}/signin`, signInData);
             if (response.status === 200) {
                 const token = response.data.token;
                 login(token);
@@ -120,40 +123,41 @@ function User () {
                         </div>
             }
             {!authenticated &&
-            <section id="signUp" className="container mx-auto flex justify-between items-center">
-            <h2 className="text-2xl font-bold cursor-pointer hover:text-accent" onClick={(e) => handleToggle(setShowSignUp)}>Is it your first time? We are happy to welcome you!</h2>
+            <section id="signUp" className="container mx-auto flex justify-center items-center flex-col">
+            {!showSignUp && 
+            <h2 className="text-2xl p-6 text-secondary font-bold cursor-pointer hover:text-accent" onClick={(e) => handleToggle(setShowSignUp)}>Is it your first time? We are happy to welcome you!{'->'} </h2>}
             {showSignUp &&
-                <div id="signUpForm">
-                    <h4 className="text-2xl font-bold">Let's get you started:</h4>
-                    {error && <p className="text-red-600">Error: {error}</p>}
+                <div id="signUpForm flex flex-col justify-end items-center">
+                    <h4 className="text-2xl font-bold py-6">Let's get you started:</h4>
+                    {error && <p className="flex text-red-600 bg-white rounded-xl shadow-lg p-6 mb-6">Error: {error}</p>}
                     <form onSubmit={handleSignUp}>
-                        <div className="bg-white text-text-secondary rounded-xl shadow-lg p-6 mb-6">
-                            <label htmlFor="email" className="block text-text-primary font-medium mb-2"> e-mail: </label>
-                            <input type="text" name="credentials" value={signUpData.credentials} onChange={(e) => handleChange(e, setSignUpData)} />
-                            <label htmlFor="password" className="block text-text-primary font-medium mb-2"> Password: </label>
-                            <input type="password" name="secret" value={signUpData.secret} onChange={(e) => handleChange(e, setSignUpData)} />
-                            <label htmlFor="confirmPassword" className="block text-text-primary font-medium mb-2"> Confirm Password: </label>
-                            <input type="password" name="confirmPassword" value={signUpData.confirmPassword} onChange={(e) => handleChange(e, setSignUpData)} />
+                        <div className="bg-white text-secondary rounded-xl shadow-lg p-6 mb-6">
+                            <label htmlFor="email" className="block font-medium mb-2"> e-mail: </label>
+                            <input type="text" className="rounded-md" name="credentials" value={signUpData.credentials} onChange={(e) => handleChange(e, setSignUpData)} />
+                            <label htmlFor="password" className="block font-medium mb-2"> Password: </label>
+                            <input type="password" className="rounded-md" name="secret" value={signUpData.secret} onChange={(e) => handleChange(e, setSignUpData)} />
+                            <label htmlFor="confirmPassword" className="block  font-medium mb-2"> Confirm Password: </label>
+                            <input type="password" className="rounded-md" name="confirmPassword" value={signUpData.confirmPassword} onChange={(e) => handleChange(e, setSignUpData)} />
                         </div>
                         <button type="submit" disabled={loading} 
                             className="mt-4 px-6 py-2 bg-secondary text-white rounded-lg hover:bg-accent">
                             Sign me up!
                         </button>
                     </form>
+                    <p className="flex justify-center text-xl text-secondary font-bold cursor-pointer hover:text-accent py-6" onClick={(e) => handleToggle(setShowSignUp)}>{'<-'} Close</p>
                 </div>
             }
             </section>
             }
             {!authenticated && !showSignUp &&
-                <section id="signIn" className="container mx-auto flex justify-between items-center">
-                <h2 className="text-2xl font-bold">Sign in:</h2>
-                {error && <p className="text-red-600 bg-white">Error: {error}</p>}
+                <section id="signIn" className="container mx-auto flex flex-col justify-center items-center py-6">
+                {error && <p className="text-red-600 bg-white rounded-xl shadow-lg p-6 mb-6">Error: {error}</p>}
                 <form onSubmit={handleSignIn}>
-                    <div className="bg-white text-text-secondary rounded-xl shadow-lg p-6 mb-6">
-                        <label htmlFor="email"> className="block text-text-primary font-medium mb-2" e-mail: </label>
-                        <input type="text" name="credentials" value={signInData.credentials} onChange={(e) => handleChange(e, setSignInData)} />
-                        <label htmlFor="password" className="block text-text-primary font-medium mb-2"> Password: </label>
-                        <input type="password" name="secret" value={signInData.secret} onChange={(e) => handleChange(e, setSignInData)} />
+                    <div className="bg-white text-secondary rounded-xl shadow-lg p-6 mt-6">
+                        <label htmlFor="email" className="block text-secondary font-medium mt-2"> e-mail: </label>
+                        <input type="text" className="rounded-md" name="credentials" value={signInData.credentials} onChange={(e) => handleChange(e, setSignInData)} />
+                        <label htmlFor="password" className="block text-secondary font-medium mt-2"> Password: </label>
+                        <input type="password" className="rounded-md" name="secret" value={signInData.secret} onChange={(e) => handleChange(e, setSignInData)} />
                     </div>
                     <button type="submit" disabled={loading} className="mt-4 px-6 py-2 bg-secondary text-white rounded-lg hover:bg-accent">
                         Sign me in!
@@ -163,7 +167,7 @@ function User () {
             }
             {authenticated &&
                 <section id="profileInfo" className="flex flex-col items-end px-4 m-4">
-                    <p className="flex flex-row items-center ml-2 mb-4">
+                    <p className="flex flex-row items-center ml-2 mb-4 text-secondary">
                         {userProfile.email}
                         <img src={userProfile.avatar}  className="w-20 h-auto rounded-full ml-4"  alt="your avatar" />
                     </p>
